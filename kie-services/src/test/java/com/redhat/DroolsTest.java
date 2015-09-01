@@ -39,16 +39,22 @@ public class DroolsTest {
 		Business business = new Business();
 		business.setStateCode("KS");
 		facts.add(business);
-		Reason reason = new Reason();
-		Collection<Reason> reasons = new ArrayList<Reason>();
-		reasons.add(reason);
-
-		// when
-		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
-		response.setReasons(reasons);
 		
-		// then
-		Assert.assertEquals("business filtered from Kansas", ((Reason) response.getReasons().toArray()[0]).getReasonMessage());
+		// when I apply the filtering rules
+		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
+		
+		// then the business should be filtered
+		Assert.assertNotNull(response);
+		Assert.assertNotNull(response.getResponseCode());
+		Assert.assertEquals("filtered", response.getResponseCode());
+		
+		// and the reason message should be "business filtered from Kansas"
+		boolean found = false;
+		for (Reason reason : response.getReasons()){
+			if ( reason.getReasonMessage().equals( "business filtered from Kansas not found") ){
+				found = true;
+			}
+		}
 		
 	}
 	
@@ -59,6 +65,33 @@ public class DroolsTest {
 		// when I apply the filtering rules
 		// then the business should be not be filtered
 		// and the validation rules should be applied to the business
+		
+		
+		
+//		Collection<Object> facts = new ArrayList<Object>();
+//		Business business = new Business();
+//		business.setStateCode("NY");
+//		facts.add(business);
+//		
+//		// when I apply the filtering rules
+//		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
+//		
+//		// then the business should be filtered
+//		Assert.assertNotNull(response);
+//		Assert.assertNotNull(response.getResponseCode());
+//		Assert.assertEquals("filtered", response.getResponseCode());
+//		
+//		// and the reason message should be "business filtered from Kansas"
+//		boolean found = false;
+//		for (Reason reason : response.getReasons()){
+//			if ( reason.getReasonMessage().equals( "business filtered from Kansas not found") ){
+//				found = true;
+//			}
+//		}
+		
+		
+		
+		
 	}
 	
 	public void shouldCreateValidationErrorsForAnyFieldThatAreEmptyOrNull(){
