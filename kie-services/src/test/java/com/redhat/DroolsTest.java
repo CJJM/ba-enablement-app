@@ -40,12 +40,20 @@ public class DroolsTest {
 		business.setStateCode("KS");
 		facts.add(business);
 		
+		business.setName("Google");
+		business.setAddressLine1("10 Main Street");
+		business.setAddressLine2("20 Main Street");
+		business.setCity("Compton");
+		business.setZipCode("99999");
+		business.setPhoneNumber("800-867-6509");
+		business.setFederalTaxId("TaxId");
+		
 		// when I apply the filtering rules
 		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
 		
 		// then the business should be filtered
 		Assert.assertNotNull(response);
-		Assert.assertNotNull(response.getResponseCode());
+		//Assert.assertNotNull(response.getResponseCode());
 		Assert.assertEquals("filtered", response.getResponseCode());
 		
 		// and the reason message should be "business filtered from Kansas"
@@ -76,14 +84,14 @@ public class DroolsTest {
 		
 		// then the business should be not be filtered
 		Assert.assertNotNull(response);
-		Assert.assertNull(response.getResponseCode());
+		Assert.assertNotEquals("filtered", response.getResponseCode());
 		
 		// and the validation rules should be applied to the business
 		Assert.assertNotNull(response.getReasons());
-		Assert.assertTrue(response.getReasons().isEmpty());
 		
 	}
 	
+	@Test
 	public void shouldCreateValidationErrorsForAnyFieldThatAreEmptyOrNull(){
 		// scenario: all fields must have values. 
 		// given a business 
@@ -93,6 +101,68 @@ public class DroolsTest {
 		// then the business should be return a validation error
 		// and a message should say the zipcode is empty
 		// and a message should say the address is null
+		
+		Collection<Object> facts = new ArrayList<Object>();
+		Business business = new Business();
+		facts.add(business);
+		
+		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
+
+		Assert.assertNotNull(response);
+		Assert.assertEquals("error", response.getResponseCode());
+
+		boolean found = false;
+		for (Reason reason : response.getReasons()){
+			if ( reason.getReasonMessage().equals( "name field is empty") ){
+				found = true;
+				Assert.assertTrue( "name field is empty", found);
+				found = false;
+		
+			if ( reason.getReasonMessage().equals( "addressLine1 field is empty") ){
+				found = true;
+				Assert.assertTrue( "addressLine1 field is empty", found);
+				found = false;
+				
+			}
+			if ( reason.getReasonMessage().equals( "addressLine2 field is empty") ){
+				found = true;
+				Assert.assertTrue( "addressLine2 field is empty", found);
+				found = false;
+				
+			}
+			if ( reason.getReasonMessage().equals( "phoneNumber field is empty") ){
+				found = true;
+				Assert.assertTrue( "phoneNumber field is empty", found);
+				found = false;
+				
+			}
+			if ( reason.getReasonMessage().equals( "city field is empty") ){
+				found = true;
+				Assert.assertTrue( "city field is empty", found);
+				found = false;
+				
+			}
+			if ( reason.getReasonMessage().equals( "stateCode field is empty") ){
+				found = true;
+				Assert.assertTrue( "stateCode field is empty", found);
+				found = false;
+				
+			}
+			if ( reason.getReasonMessage().equals( "zipCode field is empty") ){
+				found = true;
+				Assert.assertTrue( "zipCode field is empty", found);
+				found = false;
+				
+			}
+			if ( reason.getReasonMessage().equals( "federalTaxId field is empty") ){
+				found = true;
+				Assert.assertTrue( "federalTaxId field is empty", found);
+				found = false;
+				
+			}
+		}
+	}
+		
 	}
 	
 	public void shouldEnrichTheTaxIdWithZipCode(){
