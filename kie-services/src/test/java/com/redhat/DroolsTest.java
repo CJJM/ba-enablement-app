@@ -58,7 +58,7 @@ public class DroolsTest {
 		
 	}
 	
-	
+	@Test
 	public void shouldProcessAllBusinessesNotFromKansas(){
 		// scenario: we are responsible for all businesses not from Kansas
 		// given a business from New York
@@ -66,31 +66,21 @@ public class DroolsTest {
 		// then the business should be not be filtered
 		// and the validation rules should be applied to the business
 		
+		Collection<Object> facts = new ArrayList<Object>();
+		Business business = new Business();
+		business.setStateCode("NY");
+		facts.add(business);
 		
+		// when I apply the filtering rules
+		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
 		
-//		Collection<Object> facts = new ArrayList<Object>();
-//		Business business = new Business();
-//		business.setStateCode("NY");
-//		facts.add(business);
-//		
-//		// when I apply the filtering rules
-//		RuleResponse response = service.runRules(facts, "VerifySupplier", RuleResponse.class);
-//		
-//		// then the business should be filtered
-//		Assert.assertNotNull(response);
-//		Assert.assertNotNull(response.getResponseCode());
-//		Assert.assertEquals("filtered", response.getResponseCode());
-//		
-//		// and the reason message should be "business filtered from Kansas"
-//		boolean found = false;
-//		for (Reason reason : response.getReasons()){
-//			if ( reason.getReasonMessage().equals( "business filtered from Kansas not found") ){
-//				found = true;
-//			}
-//		}
+		// then the business should be not be filtered
+		Assert.assertNotNull(response);
+		Assert.assertNull(response.getResponseCode());
 		
-		
-		
+		// and the validation rules should be applied to the business
+		Assert.assertNotNull(response.getReasons());
+		Assert.assertTrue(response.getReasons().isEmpty());
 		
 	}
 	
